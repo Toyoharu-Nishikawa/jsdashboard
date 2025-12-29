@@ -1,6 +1,6 @@
 import * as Person from "@/dataStore/person.js"
 import {makeHTML} from "@/modules/template.js"
-export const TAG_NAME = import.meta.url.split("/")?.slice(3,-1)?.join("-") ?? "origin"
+export const TAG_NAME ="my-" + (import.meta.url.replace(/^[a-z]+:\/\/[^/]+\/|\/[^/]*$/gi, "").replace(/\//g, "-") || "origin")
 
 const createHTML = () => `
 <style>

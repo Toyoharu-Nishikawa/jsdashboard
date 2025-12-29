@@ -11,6 +11,7 @@ import {TAG_NAME as grid} from "./layout/grid/index.js"
 import {TAG_NAME as header_text} from "./components/header_text/index.js"
 import {TAG_NAME as sidearea} from "./components/sidearea/index.js"
 import {TAG_NAME as gridstack} from "./components/gridstack/index.js"
+import {TAG_NAME as sidemenu} from "./components/sidemenu/index.js"
 //import {TAG_NAME as menu_icons} from "./components/menu_icons/index.js"
 //import {TAG_NAME as side_buttons} from "./components/side_buttons/index.js"
 //import {TAG_NAME as table1} from "./components/table1/index.js"
@@ -29,6 +30,7 @@ const createHTML = () => /*html*/`
   <${menu} name=menu>
   </${menu}>
   <${aside} name=aside>
+    <${sidemenu}></${sidemenu}>
   </${aside}>
   <${main} name=main>
     <${gridstack}></${gridstack}>

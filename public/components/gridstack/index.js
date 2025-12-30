@@ -1,4 +1,6 @@
 import "@/node_modules/gridstack/dist/gridstack-all.js"
+import {cardMap} from "@/dataStore/components.js"
+import {collection} from "@/dataStore/collection.js"
 
 import {TAG_NAME as back} from "./back/index.js"
 
@@ -315,11 +317,13 @@ export const CustomElem = class extends HTMLElement {
       },
       this.shadow.querySelector('.grid-stack')
     )
+    collection.subscribe(this.draw.bind(this))
 
-
-    this.draw()
+    this.draw(null,"card","neco-minijscad")
   }
-  draw(){
+  draw(data,key, value){
+    if(key!=="card")return
+
     const items = [
       {content: 'my first widget'}, // will default to location (0,0) and 1x1
       {w: 1, content: 'another longer widget!'}, // will be placed next at (1,0) and 2x1
@@ -327,27 +331,25 @@ export const CustomElem = class extends HTMLElement {
     ];
     const widget = document.createElement(back)
     widget.classList.add('grid-stack-item');
-    widget.setAttribute('gs-w', '3');
+    widget.setAttribute('gs-w', '2');
     widget.setAttribute('gs-h', '2');
-    const item = document.createElement("neco-minijscad")
-    //item.setAttribute("slot","item")
+    const item = document.createElement(value)
     item.setAttribute("name","item")
     item.setAttribute("slot","item")
     widget.appendChild(item)
     this.grid.load(items);
     this.grid.addWidget(widget)
 
-    console.log("shadowRoot",widget)
-    console.log("shadowRoot",widget.shadow)
-    console.log("shadowRoot",widget.shadowRoot)
-    console.log("shadowRoot",widget.shadowRoot.querySelector("neco-minijscad"))
-    console.log("shadowRoot",widget.shadowRoot.querySelector("slot[name='item']"))
     const elems = widget.shadowRoot.querySelector("slot[name='item']").assignedElements()
-    console.log("!!!elems!!!",elems)
     elems[0].onmousedown =  (event)=> {
       console.log('親要素がクリックされました');
       event.stopPropagation();
     }
+
+    const idCounter = collection.data.idCounter
+    const id = "id" + idCounter
+    cardMap.set(id, {elem: item})
+    collection.data.idCounter += 1
   } 
 }
 

@@ -1,23 +1,10 @@
-//import {CustomElem as NecoMonaco} from "../../../lib/dist/index.js"
-//import sheet from "../../../lib/dist/index.css" with { type: "css" }
-//const tsWorker     = "../../../lib/dist/ts.worker-CMbG-7ft.js"
-//const editorWorker = "../../../lib/dist/editor.worker-Be8ye1pW.js"
-
 import {CustomElem as NecoMonaco} from "/neco-cdn/neco-monaco/monaco-editor-wc.js"
 import sheet from "/neco-cdn/neco-monaco/index.css" with { type: "css" }
+
+import {collection} from "@/dataStore/collection.js"
+
 const tsWorker     = "/neco-cdn/neco-monaco/ts.worker-CMbG-7ft.js"
 const editorWorker = "/neco-cdn/neco-monaco/editor.worker-Be8ye1pW.js"
-
-
-
-//import sheet2 from "../../../lib/dist/editor.main.css" with { type: "css" }
-//import "@/lib/src/node_modules/monaco-editor/min/vs/editor/editor.main.js"
-//import sheet from "@/lib/src/node_modules/monaco-editor/min/vs/editor/editor.main.css" with { type: "css" }
-//import monacoCss from "@/lib/src/node_modules/monaco-editor/esm/vs/editor/editor.main.css" with { type: "css" };
-//import monacoCss from "@/lib/src/node_modules/monaco-editor/min/vs/editor/editor.main.css" with { type: "css" };
-
-//const tsWorker     = "../../../lib/src/node_modules/monaco-editor/min/vs/assets/ts.worker-CMbG-7ft.js"
-//const editorWorker = "../../../lib/src/node_modules/monaco-editor/min/vs/assets/editor.worker-Be8ye1pW.js"
 
 
 self.MonacoEnvironment = {
@@ -46,21 +33,43 @@ export const CustomElem = class extends NecoMonaco {
     this.initialize()
   }
   initialize(){
-//    this.setEvent()
     console.log(this.editor)
-//    const monaco = this.monaco
-//    const model = this.editor.getModel();
-//    console.log(monaco)
-//    monaco.editor.setModelLanguage(model,'javascript'); // JavaScriptとして設定
-//    monaco.editor.setTheme("vs-dark");
     this.editor.updateOptions({
       fontSize: 18 
     });
-
+    this.setEvent()
   }
   setEvent(){
-    reaction.subscribe(this.draw.bind(this)) 
-    reaction.subscribe(this.clear.bind(this)) 
+//    reaction.subscribe(this.draw.bind(this)) 
+//    reaction.subscribe(this.clear.bind(this)) 
+    this.shadowRoot.addEventListener("keydown",this.keyBind.bind(this),{capture:true})    
+    this.shadowRoot.addEventListener("wheel",this.wheelBind.bind(this),{ capture:true,passive: false })    
+  }
+  keyBind(e){
+    if(e.shiftKey && e.key === 'Enter'){
+      e.preventDefault()
+      const code = this.editor.getValue()
+      collection.data.code = code
+    }
+    if(e.ctrlKey && e.altKey && e.key === 'k'){
+      e.preventDefault()
+      const mode = this.getAttribute("mode")
+      if(mode){
+        this.setAttribute("mode","")
+      }
+      else{
+        this.setAttribute("mode","vim")
+      }
+    }
+  } 
+  wheelBind(e){
+    if (e.ctrlKey) {
+      e.preventDefault(); // 必要ならブラウザのズームを防ぐ
+      const monaco = this.monaco
+      const current = this.editor.getOption(monaco.editor.EditorOption.fontSize);
+      const next = e.deltaY < 0 ? current + 1 : current - 1;
+      this.editor.updateOptions({ fontSize: next });
+    }
   }
   draw(data,key,target){
     if(key !=="mode")return

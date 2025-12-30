@@ -56,15 +56,12 @@ export const CustomElem = class extends HTMLElement {
     this.initialize()
   }
   initialize(){
-    console.log("initialize")
     document.addEventListener("keydown",this.keyBind.bind(this))    
   }
   keyBind(e){
     e.stopPropagation()
-    console.log("ddd")
     if(e.shiftKey && e.key === 'Tab'){
       e.preventDefault()
-      console.log("show or hide")
       collection.data.drawAreaVisible = !collection.data.drawAreaVisible
     }
   }

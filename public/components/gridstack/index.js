@@ -283,13 +283,37 @@ const createHTML = () => /*html*/`
 }
 
 </style>
+
+<style>
+  /*
+.grid-stack {
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+  height: auto !important;
+
+}
+ */
+.grid-stack {
+  min-height: 100% !important;
+  overflow: auto !important;
+  height: auto !important;
+}
+/*
+.grid-stack > .grid-stack-item {
+  width: calc(var(--gs-w) * var(--gs-cell)) !important;
+  left: calc(var(--gs-x) * var(--gs-cell)) !important;
+}
+*/
+</style>
+
 <div class="grid-stack">
-  <div class="grid-stack-item" gs-w="4" gs-h="2">
-   <div class="grid-stack-item-content" style="background:#ddd;">カード</div>
-   <neco-three class="grid-stack-item-content" style="background:#ddd;">カード</neco-three>
-  </div>
 </div>
 `
+
+//  <div class="grid-stack-item" gs-w="4" gs-h="2">
+//<neco-three class="grid-stack-item-content" style="background:#ddd;">カード</neco-three>
+//  </div>
+
 export const CustomElem = class extends HTMLElement {
   constructor(){
     super()
@@ -305,6 +329,10 @@ export const CustomElem = class extends HTMLElement {
   initialize(){
     this.grid = GridStack.init(
       {
+          maxRow: 0,   // ← 無制限
+
+          disableOneColumnMode: true,
+
 //        draggable: {
 //          handle: '.grid-stack-item-content'
 //        },
@@ -317,30 +345,63 @@ export const CustomElem = class extends HTMLElement {
       },
       this.shadow.querySelector('.grid-stack')
     )
+    this.grid.engine._updateContainerHeight = ()=> {}
+
     collection.subscribe(this.draw.bind(this))
 
     this.draw(null,"card","neco-minijscad")
+    this.draw(null,"card","neco-three")
   }
   draw(data,key, value){
     if(key!=="card")return
 
     const items = [
-      {content: 'my first widget'}, // will default to location (0,0) and 1x1
-      {w: 1, content: 'another longer widget!'}, // will be placed next at (1,0) and 2x1
+//      {content: 'my first widget'}, // will default to location (0,0) and 1x1
+//      {w: 1, content: 'another longer widget!'}, // will be placed next at (1,0) and 2x1
       //{content: '<neco-minijscad></neco-minijscad>'}, // will default to location (0,0) and 1x1
     ];
-    const widget = document.createElement(back)
-    widget.classList.add('grid-stack-item');
-    widget.setAttribute('gs-w', '2');
-    widget.setAttribute('gs-h', '2');
+    //const widget = document.createElement(back)
+   // widget.classList.add('grid-stack-item');
+    //widget.setAttribute('gs-w', '3');
+    //widget.setAttribute('gs-h', '3');
+//    const item = document.createElement(value)
+//    item.setAttribute("name","item")
+//    item.setAttribute("slot","item")
+//    item.classList.add('grid-stack-item-content')
+//    widget.appendChild(item)
+//
+
+    const content = document.createElement(back)
+    content.classList.add('grid-stack-item-content')
+ //   content.classList.add('grid-stack-item-content','item-style')
     const item = document.createElement(value)
+    //const item = document.createElement("div")
     item.setAttribute("name","item")
     item.setAttribute("slot","item")
-    widget.appendChild(item)
-    this.grid.load(items);
+    content.appendChild(item)
+//    content.style.background="orange"
+//    content.style.display="grid"
+//    content.style.gridTemplateRows="minmax(0,1fr)"
+//    content.style.gridTemplateColumns="minmax(0,1fr)"
+//    content.style.gridRow="1/2"
+//    content.style.gridColumn="1/2"
+    //content.style.overflow="hidden"
+
+    const widget  = document.createElement("div")
+//    widget.style.display="grid"
+//    widget.style.gridTemplateRows="minmax(0,1fr)"
+//    widget.style.gridTemplateColumns="minmax(0,1fr)"
+
+
+    widget.classList.add('grid-stack-item');
+    widget.setAttribute('gs-w', '4');
+    widget.setAttribute('gs-h', '4');
+    widget.appendChild(content)
+
+//    this.grid.load(items);
     this.grid.addWidget(widget)
 
-    const elems = widget.shadowRoot.querySelector("slot[name='item']").assignedElements()
+    const elems = content.shadowRoot.querySelector("slot[name='item']").assignedElements()
     elems[0].onmousedown =  (event)=> {
       console.log('親要素がクリックされました');
       event.stopPropagation();
@@ -348,7 +409,7 @@ export const CustomElem = class extends HTMLElement {
 
     const idCounter = collection.data.idCounter
     const id = "id" + idCounter
-    cardMap.set(id, {elem: item})
+    //cardMap.set(id, {elem: item})
     collection.data.idCounter += 1
   } 
 }

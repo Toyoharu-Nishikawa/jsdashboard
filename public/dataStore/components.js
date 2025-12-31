@@ -5,9 +5,8 @@ export const customElemMap = new Map([
   [TG_minijscad, CE_minijscad],
   [TG_three    , CE_three],
 ])
+export const cardMap = new Map()
 
-export const cardMap = new Map([
-])
 const initialize = () => {
   customElemMap.forEach((value,key)=>{
     console.log(key, value)

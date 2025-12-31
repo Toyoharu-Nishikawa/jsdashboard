@@ -85,7 +85,6 @@ export const CustomElem = class extends HTMLElement {
 
 
     const mouseMove = (e)=>{
-      console.log("moving", this.originalWidth)
       const currentX =  e.clientX;
       this.drawBoxWidth = this.originalX - currentX + this.originalWidth;
       elements.drawArea.style.width = this.drawBoxWidth + "px";
@@ -103,7 +102,6 @@ export const CustomElem = class extends HTMLElement {
     const mouseUp = (e)=>{
       document.body.removeEventListener("mousemove", bindedMouseMove)
       //document.body.onmousemove = null
-      console.log("mouse UP")
       this.originalWidth =  null
       this.flag = false
       //this.remove(this.element)
@@ -113,15 +111,17 @@ export const CustomElem = class extends HTMLElement {
     document.body.onmouseup = mouseUp.bind(this)
   }
   draw(data, key, value){
-    if(key!=="drawAreaVisible")return
+    console.log("key", key)
+    if(key!=="drawAreaVisible" && key!=null)return
     const drawArea = this.elements.drawArea
-    if(!value){
-      drawArea.style.visibility ="hidden"
-      drawArea.style.opacity = 0 
-    }
-    else{
+    const drawAreaVisible = data.drawAreaVisible
+    if(drawAreaVisible){
       drawArea.style.visibility ="visible"
       drawArea.style.opacity = 1
+    }
+    else{
+      drawArea.style.visibility ="hidden"
+      drawArea.style.opacity = 0 
     }
   }
 }

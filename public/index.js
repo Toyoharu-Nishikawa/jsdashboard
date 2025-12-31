@@ -21,6 +21,7 @@ import {TAG_NAME as sidemenu} from "./components/sidemenu/index.js"
 import {TAG_NAME as footer_text} from "./components/footer_text/index.js"
 
 import {collection} from "@/dataStore/collection.js"
+import {addToLoacalStorage} from "@/modules/utility.js"
 
 export const TAG_NAME ="my-" + (import.meta.url.replace(/^[a-z]+:\/\/[^/]+\/|\/[^/]*$/gi, "").replace(/\//g, "-") || "origin")
 
@@ -56,17 +57,23 @@ export const CustomElem = class extends HTMLElement {
     this.initialize()
   }
   initialize(){
-    console.log("initialize")
     document.addEventListener("keydown",this.keyBind.bind(this))    
+    this.setFromLocalStorage()
   }
   keyBind(e){
     e.stopPropagation()
-    console.log("ddd")
     if(e.shiftKey && e.key === 'Tab'){
       e.preventDefault()
-      console.log("show or hide")
-      collection.data.drawAreaVisible = !collection.data.drawAreaVisible
+      const drawAreaVisible = !collection.data.drawAreaVisible
+      collection.data.drawAreaVisible = drawAreaVisible
+      addToLoacalStorage("jsDashboardRecord", "drawAreaVisible", drawAreaVisible)
     }
+  }
+  setFromLocalStorage(){
+    console.log("setFromLoacacStorage")
+    const item = window.localStorage.getItem("jsDashboardRecord") || {}
+    const data = JSON.parse(item)
+    collection.loadData(data)
   }
 }
 

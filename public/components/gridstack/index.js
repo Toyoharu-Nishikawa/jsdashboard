@@ -284,13 +284,12 @@ const createHTML = () => /*html*/`
 
 </style>
 <div class="grid-stack">
-  <div class="grid-stack-item" gs-w="4" gs-h="2">
-<div class="grid-stack-item-content" style="background:#ddd;">カード</div>
-  </div>
 </div>
 `
 
+//  <div class="grid-stack-item" gs-w="4" gs-h="2">
 //<neco-three class="grid-stack-item-content" style="background:#ddd;">カード</neco-three>
+//  </div>
 
 export const CustomElem = class extends HTMLElement {
   constructor(){
@@ -345,20 +344,38 @@ export const CustomElem = class extends HTMLElement {
 
     const content = document.createElement(back)
     content.classList.add('grid-stack-item-content')
+    const item = document.createElement(value)
+    //const item = document.createElement("div")
+    item.setAttribute("name","item")
+    item.setAttribute("slot","item")
+    content.appendChild(item)
+    content.style.background="orange"
+    content.style.display="grid"
+    content.style.gridTemplateRows="minmax(0,1fr)"
+    content.style.gridTemplateColumns="minmax(0,1fr)"
+    content.style.gridRow="1/2"
+    content.style.gridColumn="1/2"
+    //content.style.overflow="hidden"
+
     const widget  = document.createElement("div")
+    widget.style.display="grid"
+    widget.style.gridTemplateRows="minmax(0,1fr)"
+    widget.style.gridTemplateColumns="minmax(0,1fr)"
+
+
     widget.classList.add('grid-stack-item');
-    widget.setAttribute('gs-w', '3');
-    widget.setAttribute('gs-h', '3');
+    widget.setAttribute('gs-w', '4');
+    widget.setAttribute('gs-h', '4');
     widget.appendChild(content)
 
-    this.grid.load(items);
+//    this.grid.load(items);
     this.grid.addWidget(widget)
 
-//    const elems = widget.shadowRoot.querySelector("slot[name='item']").assignedElements()
-//    elems[0].onmousedown =  (event)=> {
-//      console.log('親要素がクリックされました');
-//      event.stopPropagation();
-//    }
+    const elems = content.shadowRoot.querySelector("slot[name='item']").assignedElements()
+    elems[0].onmousedown =  (event)=> {
+      console.log('親要素がクリックされました');
+      event.stopPropagation();
+    }
 
     const idCounter = collection.data.idCounter
     const id = "id" + idCounter

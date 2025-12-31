@@ -47,6 +47,12 @@ export const CustomElem = class extends NecoMonaco {
     this.shadowRoot.addEventListener("wheel",this.wheelBind.bind(this),{ capture:true,passive: false })    
   }
   keyBind(e){
+    if(e.shiftKey && e.key === 'Tab'){
+      e.preventDefault()
+      const drawAreaVisible = !collection.data.drawAreaVisible
+      collection.data.drawAreaVisible = drawAreaVisible
+      addToLoacalStorage("jsDashboardRecord", "drawAreaVisible", drawAreaVisible)
+    }
     if(e.shiftKey && e.key === 'Enter'){
       e.preventDefault()
       const code = this.editor.getValue()

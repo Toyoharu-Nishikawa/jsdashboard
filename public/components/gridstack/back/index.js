@@ -40,7 +40,39 @@ const createHTML = () => /*html*/`
   div[name="inner"]{
     background: red;
   }
+/* 縁レイヤー（透明） */
+.edge {
+  position: absolute;
+  background: transparent;
+  pointer-events: auto; /* ← hover を拾う */
+  z-index: 10; /* 子要素より上に置く */
+}
+
+/* 縁の幅（20px） */
+.edge-top    { top: 0; left: 0; right: 0; height: 20px; }
+.edge-bottom { bottom: 0; left: 0; right: 0; height: 20px; }
+.edge-left   { top: 0; bottom: 0; left: 0; width: 20px; }
+.edge-right  { top: 0; bottom: 0; right: 0; width: 20px; }
+
+.edge-parent{
+  background: #eeeeee;
+  transition: background-color 0.5s ease; /* */
+}
+
+/* edge に hover したら親を光らせる */
+.edge-parent:hover {
+  /*filter: brightness(110%);*/
+  cursor: move;
+}
+
 </style>
+<div class="edge-parent">
+  <div class="edge edge-top"></div>
+  <div class="edge edge-bottom"></div>
+  <div class="edge edge-left"></div>
+  <div class="edge edge-right"></div>
+</div>
+
 <div name="outer">
    <slot name="item"></slot>
 </div>

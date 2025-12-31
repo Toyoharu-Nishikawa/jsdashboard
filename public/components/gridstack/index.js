@@ -283,6 +283,14 @@ const createHTML = () => /*html*/`
 }
 
 </style>
+
+<style>
+.item-style {
+  background-color: #808080; /* グレー */
+  transition: 0.3s; /* アニメーションを滑らかに */
+}
+</style>
+
 <div class="grid-stack">
 </div>
 `
@@ -344,23 +352,24 @@ export const CustomElem = class extends HTMLElement {
 
     const content = document.createElement(back)
     content.classList.add('grid-stack-item-content')
+ //   content.classList.add('grid-stack-item-content','item-style')
     const item = document.createElement(value)
     //const item = document.createElement("div")
     item.setAttribute("name","item")
     item.setAttribute("slot","item")
     content.appendChild(item)
-    content.style.background="orange"
-    content.style.display="grid"
-    content.style.gridTemplateRows="minmax(0,1fr)"
-    content.style.gridTemplateColumns="minmax(0,1fr)"
-    content.style.gridRow="1/2"
-    content.style.gridColumn="1/2"
+//    content.style.background="orange"
+//    content.style.display="grid"
+//    content.style.gridTemplateRows="minmax(0,1fr)"
+//    content.style.gridTemplateColumns="minmax(0,1fr)"
+//    content.style.gridRow="1/2"
+//    content.style.gridColumn="1/2"
     //content.style.overflow="hidden"
 
     const widget  = document.createElement("div")
-    widget.style.display="grid"
-    widget.style.gridTemplateRows="minmax(0,1fr)"
-    widget.style.gridTemplateColumns="minmax(0,1fr)"
+//    widget.style.display="grid"
+//    widget.style.gridTemplateRows="minmax(0,1fr)"
+//    widget.style.gridTemplateColumns="minmax(0,1fr)"
 
 
     widget.classList.add('grid-stack-item');

@@ -85,7 +85,6 @@ export const CustomElem = class extends HTMLElement {
 
 
     const mouseMove = (e)=>{
-      console.log("moving", this.originalWidth)
       const currentX =  e.clientX;
       this.drawBoxWidth = this.originalX - currentX + this.originalWidth;
       elements.drawArea.style.width = this.drawBoxWidth + "px";
@@ -103,7 +102,6 @@ export const CustomElem = class extends HTMLElement {
     const mouseUp = (e)=>{
       document.body.removeEventListener("mousemove", bindedMouseMove)
       //document.body.onmousemove = null
-      console.log("mouse UP")
       this.originalWidth =  null
       this.flag = false
       //this.remove(this.element)

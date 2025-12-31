@@ -57,6 +57,7 @@ export const CustomElem = class extends HTMLElement {
   }
   initialize(){
     document.addEventListener("keydown",this.keyBind.bind(this))    
+    this.setFromLocalStorage()
   }
   keyBind(e){
     e.stopPropagation()
@@ -64,6 +65,12 @@ export const CustomElem = class extends HTMLElement {
       e.preventDefault()
       collection.data.drawAreaVisible = !collection.data.drawAreaVisible
     }
+  }
+  setFromLocalStorage(){
+    console.log("setFromLoacacStorage")
+    const item = window.localStorage.getItem("jsDashboardRecord") || {}
+    const data = JSON.parse(item)
+    collection.loadData(data)
   }
 }
 

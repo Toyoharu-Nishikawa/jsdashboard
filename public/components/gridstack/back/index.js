@@ -21,12 +21,18 @@ const createHTML = () => /*html*/`
     grid-template-columns: 20px 1fr 20px;
     background: yellow;
   }
+  div[name="inner"]{
+    background: red;
+  }
 </style>
-<div name="outter">
-  <slot></slot>
-  <slot name="item"></slot>
+<div name="outter" class='grid-stack-item'>
+   <div name="inner" class='grid-stack-item-content'>
+     <slot name="item"></slot>
+   </div>
 </div>
 `
+
+//  <slot></slot>
 
 export const CustomElem = class extends HTMLElement {
   constructor(){

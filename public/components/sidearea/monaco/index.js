@@ -2,6 +2,7 @@ import {CustomElem as NecoMonaco} from "/neco-cdn/neco-monaco/monaco-editor-wc.j
 import sheet from "/neco-cdn/neco-monaco/index.css" with { type: "css" }
 
 import {collection} from "@/dataStore/collection.js"
+import {addToLoacalStorage} from "@/modules/utility.js"
 
 const tsWorker     = "/neco-cdn/neco-monaco/ts.worker-CMbG-7ft.js"
 const editorWorker = "/neco-cdn/neco-monaco/editor.worker-Be8ye1pW.js"
@@ -33,11 +34,11 @@ export const CustomElem = class extends NecoMonaco {
     this.initialize()
   }
   initialize(){
-    console.log(this.editor)
     this.editor.updateOptions({
       fontSize: 18 
     });
     this.setEvent()
+    collection.subscribe(this.draw.bind(this))
   }
   setEvent(){
 //    reaction.subscribe(this.draw.bind(this)) 
@@ -49,7 +50,13 @@ export const CustomElem = class extends NecoMonaco {
     if(e.shiftKey && e.key === 'Enter'){
       e.preventDefault()
       const code = this.editor.getValue()
+      const runCounter = collection.data.runCounter  || 0
+      const newRunCounter = runCounter + 1
       collection.data.code = code
+      collection.data.runCounter = newRunCounter
+
+      addToLoacalStorage("jsDashboardRecord", "code", code)
+      addToLoacalStorage("jsDashboardRecord", "runCounter", runCounter)
     }
     if(e.ctrlKey && e.altKey && e.key === 'k'){
       e.preventDefault()
@@ -60,6 +67,12 @@ export const CustomElem = class extends NecoMonaco {
       else{
         this.setAttribute("mode","vim")
       }
+      const item = window.localStorage.getItem("jsDashboardRecord") 
+      const data = isJSON(item) ? JSON.parse(item): {}
+      const keyBind = mode ? "" : "vim"
+
+      addToLoacalStorage("jsDashboardRecord", "keyBind", keyBind)
+      collection.data.keyBind = keyBind
     }
   } 
   wheelBind(e){
@@ -67,17 +80,33 @@ export const CustomElem = class extends NecoMonaco {
       e.preventDefault(); // 必要ならブラウザのズームを防ぐ
       const monaco = this.monaco
       const current = this.editor.getOption(monaco.editor.EditorOption.fontSize);
-      const next = e.deltaY < 0 ? current + 1 : current - 1;
-      this.editor.updateOptions({ fontSize: next });
+      const fontSize = e.deltaY < 0 ? current + 1 : current - 1;
+      this.editor.updateOptions({ fontSize });
+
+      addToLoacalStorage("jsDashboardRecord", "fontSize", fontSize)
+      collection.data.fontSize = fontSize
     }
   }
-  draw(data,key,target){
-    if(key !=="mode")return
-    this.shadowRoot.setAttribute("mode", value)
-  }
-  clear(data,key,target){
-    if(key !=="clear")return
-    this.objMap.forEach(v=>this.scene.remove(v))
+  draw(data,key,value){
+    if(key == null){
+      this.editor.setValue(data.code)
+      this.setAttribute("mode",data.keyBind)
+      this.editor.updateOptions({ fontSize: data.fontSize})
+    }
+//    if(key =="runCounter")return
+//    if(key =="code") 
+//    if(key =="keyBind") 
+//    if(key =="fontSize") 
+
+    //console.log("!!!draw!!!")
+    //console.log("loadCode",data,key,value)
+    //const code = data.code 
+    //const keyBind = data.keyBind
+    //const fontSize = data.fontSize
+    //console.log(code, keyBind, fontSize)
+    
+    //this.setAttribute("mode",keyBind)
+    //this.editor.updateOptions({ fontSize})
   }
 }
 

@@ -285,10 +285,25 @@ const createHTML = () => /*html*/`
 </style>
 
 <style>
-.item-style {
-  background-color: #808080; /* グレー */
-  transition: 0.3s; /* アニメーションを滑らかに */
+  /*
+.grid-stack {
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+  height: auto !important;
+
 }
+ */
+.grid-stack {
+  min-height: 100% !important;
+  overflow: auto !important;
+  height: auto !important;
+}
+/*
+.grid-stack > .grid-stack-item {
+  width: calc(var(--gs-w) * var(--gs-cell)) !important;
+  left: calc(var(--gs-x) * var(--gs-cell)) !important;
+}
+*/
 </style>
 
 <div class="grid-stack">
@@ -314,6 +329,10 @@ export const CustomElem = class extends HTMLElement {
   initialize(){
     this.grid = GridStack.init(
       {
+          maxRow: 0,   // ← 無制限
+
+          disableOneColumnMode: true,
+
 //        draggable: {
 //          handle: '.grid-stack-item-content'
 //        },
@@ -326,6 +345,8 @@ export const CustomElem = class extends HTMLElement {
       },
       this.shadow.querySelector('.grid-stack')
     )
+    this.grid.engine._updateContainerHeight = ()=> {}
+
     collection.subscribe(this.draw.bind(this))
 
     this.draw(null,"card","neco-minijscad")

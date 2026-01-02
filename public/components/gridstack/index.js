@@ -1,18 +1,25 @@
 import "@/node_modules/gridstack/dist/gridstack-all.js"
+import "@/node_modules/@shoelace-style/shoelace/cdn/shoelace.js"
+import {addToLoacalStorage} from "@/modules/utility.js"
+import "/neco-cdn/neco-material/index.js"
 import {cardMap} from "@/dataStore/components.js"
 import {collection} from "@/dataStore/collection.js"
+import shoelaceSheet from "@/node_modules/@shoelace-style/shoelace/dist/themes/light.css" with { type: "css" }
 
 import {TAG_NAME as back} from "./back/index.js"
 
 export const TAG_NAME ="my-" + (import.meta.url.replace(/^[a-z]+:\/\/[^/]+\/|\/[^/]*$/gi, "").replace(/\//g, "-") || "origin")
 
-//<link href="./node_modules/gridstack/dist/gridstack.min.css" rel="stylesheet"/>
-//<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gridstack/dist/gridstack.min.css">
-//<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gridstack/dist/gridstack-extra.min.css">
-
 
 const createHTML = () => /*html*/`
 <style>
+:host{
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
+  grid-row: 1/2;
+  grid-column: 1/2;
+}
 .grid-stack {
   position: relative;
 }
@@ -285,34 +292,69 @@ const createHTML = () => /*html*/`
 </style>
 
 <style>
-  /*
-.grid-stack {
-  overflow-x: auto !important;
-  overflow-y: auto !important;
-  height: auto !important;
-
-}
- */
 .grid-stack {
   min-height: 100% !important;
-  overflow: auto !important;
+  overflow-y: scroll !important;
   height: auto !important;
+  grid-column: 2/3;
+  grid-row: 1/2;
+  background: #D7EEFF;	
 }
-/*
-.grid-stack > .grid-stack-item {
-  width: calc(var(--gs-w) * var(--gs-cell)) !important;
-  left: calc(var(--gs-x) * var(--gs-cell)) !important;
+
+.cardArea{
+  /*background: orange;*/
+  display:grid; 
+  width: 60px;
+  height: 60px;
+  grid-template-columns: 10px 1fr 10px;
+  grid-template-rows   : 10px 1fr 10px;
+
+  background: #98c0dfff;	
 }
-*/
+
+.card{
+  /*background: red;*/
+  grid-row:2/3;
+  grid-column:2/3;
+  width: 40px;
+  height: 40px;
+  border: 1px solid black;
+  cursor: pointer;
+  border-radius: 5px;
+
+  background: #ffffff;	
+}
+
+.row{
+  display:grid;
+  grid-row : 1/2;
+  grid-column : 1/2;
+  grid-template-rows: minmax(0,1fr);
+  grid-template-columns: 60px 1fr;
+}
+.sidepanel{
+  display: flex; 
+  flex-direction: column;
+  background: #8eb2ceff;	
+}
 </style>
 
-<div class="grid-stack">
+<div class="row">
+  <div class="sidepanel col-md-2 d-none d-md-block">
+    <div class="cardArea">
+      <sl-tooltip content="minijscad" trigger="hover" placement="right">
+        <md-icon data-card="neco-minijscad" class="grid-stack-item card" gs-w="4" gs-h="3">2d</md-icon>
+      </sl-tooltip>
+    </div>
+    <div class="cardArea">
+      <sl-tooltip content="three.js" trigger="hover" placement="right">
+        <md-icon data-card="neco-three" class="grid-stack-item card" gs-w="4" gs-h="3">3d</md-icon>
+      </sl-tooltip>
+    </div>
+  </div>
+  <div class="grid-stack"></div>
 </div>
 `
-
-//  <div class="grid-stack-item" gs-w="4" gs-h="2">
-//<neco-three class="grid-stack-item-content" style="background:#ddd;">カード</neco-three>
-//  </div>
 
 export const CustomElem = class extends HTMLElement {
   constructor(){
@@ -323,94 +365,107 @@ export const CustomElem = class extends HTMLElement {
     const shadow = this.attachShadow({mode: 'open'});
     const HTML = createHTML()
     shadow.setHTMLUnsafe(HTML)
+    this.shadowRoot.adoptedStyleSheets = [shoelaceSheet]
+
     this.shadow = shadow
     this.initialize()
   }
   initialize(){
     this.grid = GridStack.init(
       {
-          maxRow: 0,   // ← 無制限
-
+          maxRow: 0, 
+          acceptWidgets: true,
           disableOneColumnMode: true,
-
-//        draggable: {
-//          handle: '.grid-stack-item-content'
-//        },
-//        resizable: {
-//          handles: 'all'
-//        }
-//        float: true,
 //        cellHeight: 80,
-//        disableOneColumnMode: true
       },
       this.shadow.querySelector('.grid-stack')
     )
-    this.grid.engine._updateContainerHeight = ()=> {}
-
+    this.setEvents()
     collection.subscribe(this.draw.bind(this))
-
-    this.draw(null,"card","neco-minijscad")
-    this.draw(null,"card","neco-three")
+    collection.subscribe(this.save.bind(this))
+    collection.subscribe(this.load.bind(this))
   }
-  draw(data,key, value){
-    if(key!=="card")return
-
-    const items = [
-//      {content: 'my first widget'}, // will default to location (0,0) and 1x1
-//      {w: 1, content: 'another longer widget!'}, // will be placed next at (1,0) and 2x1
-      //{content: '<neco-minijscad></neco-minijscad>'}, // will default to location (0,0) and 1x1
-    ];
-    //const widget = document.createElement(back)
-   // widget.classList.add('grid-stack-item');
-    //widget.setAttribute('gs-w', '3');
-    //widget.setAttribute('gs-h', '3');
-//    const item = document.createElement(value)
-//    item.setAttribute("name","item")
-//    item.setAttribute("slot","item")
-//    item.classList.add('grid-stack-item-content')
-//    widget.appendChild(item)
-//
-
+  setEvents(){
+    this.grid.engine._updateContainerHeight = ()=> {}
+      // 外部ドラッグ可能にする
+    const cardElems = this.shadowRoot.querySelectorAll('.card')
+    GridStack.setupDragIn(cardElems, {
+      revert: 'invalid',
+      scroll: false,
+      helper: 'clone'
+    })
+    this.grid.on('dropped', (event, previousWidget, newWidget) => {
+      const cardName = newWidget.el.dataset.card
+      console.log("card", cardName)
+      console.log("newWidget", newWidget)
+      const grid = newWidget.grid
+      const {x,y,w,h} = newWidget
+      const res = grid.removeWidget(newWidget.el,true)
+      console.log(res) 
+      this.addCard(cardName, {x,y,w,h})
+    })
+  }
+  addCard(cardName, option, idOption){
+    const widget  = document.createElement("div")
+    widget.classList.add('grid-stack-item');
+ 
     const content = document.createElement(back)
     content.classList.add('grid-stack-item-content')
- //   content.classList.add('grid-stack-item-content','item-style')
-    const item = document.createElement(value)
-    //const item = document.createElement("div")
+
+    const item = document.createElement(cardName)
     item.setAttribute("name","item")
     item.setAttribute("slot","item")
     content.appendChild(item)
-//    content.style.background="orange"
-//    content.style.display="grid"
-//    content.style.gridTemplateRows="minmax(0,1fr)"
-//    content.style.gridTemplateColumns="minmax(0,1fr)"
-//    content.style.gridRow="1/2"
-//    content.style.gridColumn="1/2"
-    //content.style.overflow="hidden"
-
-    const widget  = document.createElement("div")
-//    widget.style.display="grid"
-//    widget.style.gridTemplateRows="minmax(0,1fr)"
-//    widget.style.gridTemplateColumns="minmax(0,1fr)"
-
-
-    widget.classList.add('grid-stack-item');
-    widget.setAttribute('gs-w', '4');
-    widget.setAttribute('gs-h', '4');
+    widget.setAttribute('gs-w', option.w);
+    widget.setAttribute('gs-h', option.h);
+    widget.setAttribute('gs-x', option.x);
+    widget.setAttribute('gs-y', option.y);
     widget.appendChild(content)
-
-//    this.grid.load(items);
-    this.grid.addWidget(widget)
-
-    const elems = content.shadowRoot.querySelector("slot[name='item']").assignedElements()
-    elems[0].onmousedown =  (event)=> {
-      console.log('親要素がクリックされました');
-      event.stopPropagation();
+   
+    this.grid.addWidget(widget, option)
+    const idCounter = collection.data.idCounter || 0
+    const idLabel = idOption ? idOption: "id" + idCounter
+    cardMap.set(idLabel, {elem: item, cardName, option})
+    const newIdCounter = idCounter + 1
+ 
+    const removeElem = (e) => {
+      this.grid.removeWidget(widget,true)
+      cardMap.delete(idLabel)
     }
+    content.elements.closeButton.onclick = removeElem.bind(this)
+ 
+    const elems = content.shadowRoot.querySelector("slot[name='item']").assignedElements()
+    elems[0].onmousedown =  (event)=> event.stopPropagation()
 
-    const idCounter = collection.data.idCounter
-    const id = "id" + idCounter
-    //cardMap.set(id, {elem: item})
-    collection.data.idCounter += 1
+    content.addId(idLabel)
+    collection.data.idCounter = newIdCounter 
+
+    addToLoacalStorage("jsDashboardRecord", "idCounter", newIdCounter)
+  }
+  save(data,key,value){
+    if(key!=="saveCounter")return
+
+    const layout = [...cardMap.entries()]
+      .map(v=>[v[0],{cardName:v[1].cardName,option:v[1].option}])
+
+    console.log("layout", layout)
+    collection.data.layout = layout
+  }
+  load(data, key, value){
+    if(key!=="readCounter")return
+    const layout = data.layout
+    console.log("readed layout", layout)
+    layout.forEach(v=>{
+      const idLabel  = v[0]
+      const cardName = v[1].cardName
+      const option = v[1].option
+      this.addCard(cardName, option, idLabel)
+    })
+  }
+  draw(data,key, value){
+    if(key!=="card")return
+    this.addCard(cardName, height,width)
+    const items = []
   } 
 }
 

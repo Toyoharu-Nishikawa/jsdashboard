@@ -12,7 +12,7 @@ import {TAG_NAME as header_text} from "./components/header_text/index.js"
 import {TAG_NAME as sidearea} from "./components/sidearea/index.js"
 import {TAG_NAME as gridstack} from "./components/gridstack/index.js"
 import {TAG_NAME as sidemenu} from "./components/sidemenu/index.js"
-//import {TAG_NAME as menu_icons} from "./components/menu_icons/index.js"
+import {TAG_NAME as menu_icons} from "./components/menu_icons/index.js"
 //import {TAG_NAME as side_buttons} from "./components/side_buttons/index.js"
 //import {TAG_NAME as table1} from "./components/table1/index.js"
 //import {TAG_NAME as cad1} from "./components/cad1/index.js"
@@ -22,6 +22,7 @@ import {TAG_NAME as footer_text} from "./components/footer_text/index.js"
 
 import {collection} from "@/dataStore/collection.js"
 import {addToLoacalStorage} from "@/modules/utility.js"
+import * as sci from "@/node_modules/sci/index.js"
 
 export const TAG_NAME ="my-" + (import.meta.url.replace(/^[a-z]+:\/\/[^/]+\/|\/[^/]*$/gi, "").replace(/\//g, "-") || "origin")
 
@@ -31,6 +32,7 @@ const createHTML = () => /*html*/`
     <${header_text}>JS DASHBOARD</${header_text}>
   </${header}>
   <${menu} name=menu>
+    <${menu_icons}></${menu_icons}>
   </${menu}>
   <${aside} name=aside>
     <${sidemenu}></${sidemenu}>
@@ -57,6 +59,7 @@ export const CustomElem = class extends HTMLElement {
     this.initialize()
   }
   initialize(){
+    window.sci = sci
     document.addEventListener("keydown",this.keyBind.bind(this))    
     this.setFromLocalStorage()
   }
@@ -73,9 +76,16 @@ export const CustomElem = class extends HTMLElement {
     console.log("setFromLoacacStorage")
     const item = window.localStorage.getItem("jsDashboardRecord") || {}
     const data = JSON.parse(item)
-    collection.loadData(data)
+    collection.data.idCounter = data.idCounter
+    collection.data.code = data.code
+    collection.data.fontSize = data.fontSize
+    collection.data.keyBind = data.keyBind
+    collection.data.drawAreaVisible = data.drawAreaVisible
   }
 }
 
 customElements.define(TAG_NAME, CustomElem)
-customElements.whenDefined(TAG_NAME).then(()=>console.log("!!! defined !!!",TAG_NAME))
+customElements.whenDefined(TAG_NAME).then(()=>{
+  console.log("!!! defined !!!",TAG_NAME)
+  console.clear()
+})

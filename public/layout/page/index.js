@@ -7,7 +7,7 @@ const createHTML = () => /*html*/`
     height: 100%;
     display: grid;
     --grid-template-rows: 75px 1fr 30px;
-    --grid-template-columns: 200px 300px 1fr 150px;
+    --grid-template-columns: 10px 320px 1fr 150px;
  
     grid-template-rows: var(--grid-template-rows);
     grid-template-columns: var(--grid-template-columns);

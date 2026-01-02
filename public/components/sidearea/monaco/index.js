@@ -10,7 +10,6 @@ const editorWorker = "/neco-cdn/neco-monaco/editor.worker-Be8ye1pW.js"
 
 self.MonacoEnvironment = {
   getWorker(_, label) {
-    console.log("label",label)
     if (label === "typescript" || label === "javascript") {
       return new Worker(new URL(tsWorker, import.meta.url),{ type: 'module' });
     }
@@ -62,7 +61,6 @@ export const CustomElem = class extends NecoMonaco {
       collection.data.runCounter = newRunCounter
 
       addToLoacalStorage("jsDashboardRecord", "code", code)
-      addToLoacalStorage("jsDashboardRecord", "runCounter", runCounter)
     }
     if(e.ctrlKey && e.altKey && e.key === 'k'){
       e.preventDefault()
@@ -94,25 +92,15 @@ export const CustomElem = class extends NecoMonaco {
     }
   }
   draw(data,key,value){
-    if(key == null){
+    if(key == "code" || key=="readCounter"){
       this.editor.setValue(data.code)
+    }  
+    if(key == "keyBind"){
       this.setAttribute("mode",data.keyBind)
+    }
+    if(key == "fontSize"){
       this.editor.updateOptions({ fontSize: data.fontSize})
     }
-//    if(key =="runCounter")return
-//    if(key =="code") 
-//    if(key =="keyBind") 
-//    if(key =="fontSize") 
-
-    //console.log("!!!draw!!!")
-    //console.log("loadCode",data,key,value)
-    //const code = data.code 
-    //const keyBind = data.keyBind
-    //const fontSize = data.fontSize
-    //console.log(code, keyBind, fontSize)
-    
-    //this.setAttribute("mode",keyBind)
-    //this.editor.updateOptions({ fontSize})
   }
 }
 

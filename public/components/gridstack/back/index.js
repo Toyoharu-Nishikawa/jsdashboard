@@ -16,8 +16,8 @@ const createHTML = () => /*html*/`
     grid-template-columns: minmax(0, 1fr);
   }
   ::slotted([name="item"]){
-     grid-row: 2/3;
-     grid-column: 2/3;
+    grid-row: 2/3;
+    grid-column: 2/3;
     background: blue;
   }
   div[name="outer"]{
@@ -26,6 +26,11 @@ const createHTML = () => /*html*/`
     left:20px;
     right:20px;
     bottom:20px;
+/*
+    display: grid;
+    grid-template-rows: minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
+    */
     /*
     height:100%;
     width: 100%;

@@ -342,6 +342,11 @@ const createHTML = () => /*html*/`
 <div class="row">
   <div class="sidepanel col-md-2 d-none d-md-block">
     <div class="cardArea">
+      <sl-tooltip content="plotly.js" trigger="hover" placement="right">
+        <md-icon data-card="neco-plotly" class="grid-stack-item card" gs-w="4" gs-h="3">show_chart</md-icon>
+      </sl-tooltip>
+    </div>
+    <div class="cardArea">
       <sl-tooltip content="minijscad" trigger="hover" placement="right">
         <md-icon data-card="neco-minijscad" class="grid-stack-item card" gs-w="4" gs-h="3">2d</md-icon>
       </sl-tooltip>

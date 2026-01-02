@@ -64,22 +64,63 @@ const createHTML = () => /*html*/`
   /*filter: brightness(110%);*/
   cursor: move;
 }
+.edge-top {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.edge-top > .id-label {
+  margin:0;
+  padding: 0;
+}
+.close-button{
+  position:absolute;
+  right: 2px;
+  top: -3px;
+  cursor:pointer;
+  z-index: 100;
+}
+.cross {
+  position: relative;
+  display: inline-block;
+  width: 16px;
+  height: 1px;
+  background: #808080;
+  transform: rotate(45deg);
+  vertical-align: middle;
+}
+
+.cross::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #808080;
+  transform: rotate(90deg);
+}
+
+.close-button:hover .cross,
+.close-button:hover .cross::before
+{
+  background: red;
+}
+
 
 </style>
 <div class="edge-parent">
-  <div class="edge edge-top"></div>
+  <div class="edge edge-top"><p class="id-label"></p></div>
   <div class="edge edge-bottom"></div>
   <div class="edge edge-left"></div>
   <div class="edge edge-right"></div>
 </div>
-
+<div class="close-button"><span class="cross"></span></div>
 <div name="outer">
    <slot name="item"></slot>
 </div>
 `
-//</div>
-
-//  <slot></slot>
 
 export const CustomElem = class extends HTMLElement {
   constructor(){
@@ -91,17 +132,19 @@ export const CustomElem = class extends HTMLElement {
     const HTML = createHTML()
     shadow.setHTMLUnsafe(HTML)
     this.shadow = shadow
-    //const elems = shadow.querySelector("slot[name='item']").assignedElements()
-    //console.log("!!!elems!!!",elems)
-    //elems[0].onmousedown =  (event)=> {
-    //  console.log('親要素がクリックされました');
-    //  event.stopPropagation();
-    //}
-    ////shadow.querySelector("div[name='outter']").addEventListener('click', function(event) {
-    //shadow.querySelector("div[name='outter']").addEventListener('mousedown', function(event) {
-    //  console.log('親要素がクリックされました');
-    //  event.stopPropagation();
-    //});
+    this.initialize()
+  }
+  initialize(){
+    console.log("!!!! initialize()!!!")
+    this.setElements()
+  }
+  setElements(){
+    const idArea = this.shadowRoot.querySelector(".id-label")
+    const closeButton = this.shadowRoot.querySelector(".close-button")
+    this.elements = {idArea, closeButton}
+  }
+  addId(idLabel){
+    this.elements.idArea.textContent = idLabel 
   }
 }
 

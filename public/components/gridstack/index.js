@@ -4,7 +4,7 @@ import {addToLoacalStorage} from "@/modules/utility.js"
 import "/neco-cdn/neco-material/index.js"
 import {cardMap} from "@/dataStore/components.js"
 import {collection} from "@/dataStore/collection.js"
-import sheet from "@/node_modules/@shoelace-style/shoelace/dist/themes/light.css" with { type: "css" }
+import shoelaceSheet from "@/node_modules/@shoelace-style/shoelace/dist/themes/light.css" with { type: "css" }
 
 import {TAG_NAME as back} from "./back/index.js"
 
@@ -309,7 +309,7 @@ const createHTML = () => /*html*/`
   grid-template-columns: 10px 1fr 10px;
   grid-template-rows   : 10px 1fr 10px;
 
-  background: #8eb2ceff;	
+  background: #98c0dfff;	
 }
 
 .card{
@@ -365,7 +365,7 @@ export const CustomElem = class extends HTMLElement {
     const shadow = this.attachShadow({mode: 'open'});
     const HTML = createHTML()
     shadow.setHTMLUnsafe(HTML)
-    this.shadowRoot.adoptedStyleSheets = [sheet];
+    this.shadowRoot.adoptedStyleSheets = [shoelaceSheet]
 
     this.shadow = shadow
     this.initialize()
@@ -382,6 +382,8 @@ export const CustomElem = class extends HTMLElement {
     )
     this.setEvents()
     collection.subscribe(this.draw.bind(this))
+    collection.subscribe(this.save.bind(this))
+    collection.subscribe(this.load.bind(this))
   }
   setEvents(){
     this.grid.engine._updateContainerHeight = ()=> {}
@@ -403,7 +405,7 @@ export const CustomElem = class extends HTMLElement {
       this.addCard(cardName, {x,y,w,h})
     })
   }
-  addCard(cardName, option){
+  addCard(cardName, option, idOption){
     const widget  = document.createElement("div")
     widget.classList.add('grid-stack-item');
  
@@ -421,23 +423,44 @@ export const CustomElem = class extends HTMLElement {
     widget.appendChild(content)
    
     this.grid.addWidget(widget, option)
-
+    const idCounter = collection.data.idCounter || 0
+    const idLabel = idOption ? idOption: "id" + idCounter
+    cardMap.set(idLabel, {elem: item, cardName, option})
+    const newIdCounter = idCounter + 1
+ 
     const removeElem = (e) => {
       this.grid.removeWidget(widget,true)
+      cardMap.delete(idLabel)
     }
-
     content.elements.closeButton.onclick = removeElem.bind(this)
  
     const elems = content.shadowRoot.querySelector("slot[name='item']").assignedElements()
     elems[0].onmousedown =  (event)=> event.stopPropagation()
 
-    const idCounter = collection.data.idCounter || 0
-    const idLabel = "id" + idCounter
-    cardMap.set(idLabel, {elem: item})
-    const newIdCounter = idCounter + 1
-    collection.data.idCounter = newIdCounter 
     content.addId(idLabel)
+    collection.data.idCounter = newIdCounter 
+
     addToLoacalStorage("jsDashboardRecord", "idCounter", newIdCounter)
+  }
+  save(data,key,value){
+    if(key!=="saveCounter")return
+
+    const layout = [...cardMap.entries()]
+      .map(v=>[v[0],{cardName:v[1].cardName,option:v[1].option}])
+
+    console.log("layout", layout)
+    collection.data.layout = layout
+  }
+  load(data, key, value){
+    if(key!=="readCounter")return
+    const layout = data.layout
+    console.log("readed layout", layout)
+    layout.forEach(v=>{
+      const idLabel  = v[0]
+      const cardName = v[1].cardName
+      const option = v[1].option
+      this.addCard(cardName, option, idLabel)
+    })
   }
   draw(data,key, value){
     if(key!=="card")return

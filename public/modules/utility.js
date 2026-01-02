@@ -15,3 +15,4 @@ export const addToLoacalStorage = (storageName, key, value) => {
   const itemNew = JSON.stringify(data)
   window.localStorage.setItem(storageName, itemNew)
 }
+

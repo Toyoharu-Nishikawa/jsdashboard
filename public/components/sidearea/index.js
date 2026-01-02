@@ -47,7 +47,7 @@ const createHTML = () => /*html*/`
     grid-template-columns: minmax(0,1fr);
     width: 500px;
     background: green;
-    transition: opacity 0.5s ease, visibility 0.5s ease;
+    /*transition: opacity 0.5s ease, visibility 0.5s ease;*/
   }
   ${monaco}{
     grid-row: 1/2;
@@ -111,7 +111,6 @@ export const CustomElem = class extends HTMLElement {
     document.body.onmouseup = mouseUp.bind(this)
   }
   draw(data, key, value){
-    console.log("key", key)
     if(key!=="drawAreaVisible" && key!=null)return
     const drawArea = this.elements.drawArea
     const drawAreaVisible = data.drawAreaVisible

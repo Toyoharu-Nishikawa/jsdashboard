@@ -18,7 +18,7 @@ const createHTML = () => /*html*/`
   ::slotted([name="item"]){
     grid-row: 2/3;
     grid-column: 2/3;
-    background: blue;
+    /*background: blue;*/
   }
   div[name="outer"]{
     position:absolute;

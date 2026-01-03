@@ -340,6 +340,7 @@ const createHTML = () => /*html*/`
 </style>
 
 <div class="row">
+  <!-- icon -->
   <div class="sidepanel col-md-2 d-none d-md-block">
     <div class="cardArea">
       <sl-tooltip content="plotly.js" trigger="hover" placement="right">
@@ -356,7 +357,25 @@ const createHTML = () => /*html*/`
         <md-icon data-card="neco-three" class="grid-stack-item card" gs-w="4" gs-h="3">3d</md-icon>
       </sl-tooltip>
     </div>
+    <div class="cardArea">
+      <sl-tooltip content="button" trigger="hover" placement="right">
+        <md-icon data-card="sl-button" data-text="button" class="grid-stack-item card" gs-w="2" gs-h="1">rectangle</md-icon>
+      </sl-tooltip>
+    </div>
+    <div class="cardArea">
+      <sl-tooltip content="switch" trigger="hover" placement="right">
+        <md-icon data-card="sl-switch" data-text="switch" class="grid-stack-item card" gs-w="2" gs-h="1">toggle_off</md-icon>
+      </sl-tooltip>
+    </div>
+    <div class="cardArea">
+      <sl-tooltip content="input" trigger="hover" placement="right">
+        <md-icon data-card="sl-input" data-text="switch" class="grid-stack-item card" gs-w="2" gs-h="1">input</md-icon>
+      </sl-tooltip>
+    </div>
+
   </div>
+
+  <!-- dashboard -->
   <div class="grid-stack"></div>
 </div>
 `
@@ -378,6 +397,7 @@ export const CustomElem = class extends HTMLElement {
   initialize(){
     this.grid = GridStack.init(
       {
+//          column: 12, 
           maxRow: 0, 
           acceptWidgets: true,
           disableOneColumnMode: true,
@@ -401,10 +421,13 @@ export const CustomElem = class extends HTMLElement {
     })
     this.grid.on('dropped', (event, previousWidget, newWidget) => {
       const cardName = newWidget.el.dataset.card
+      const text = newWidget.el.dataset.text
       const grid = newWidget.grid
       const {x,y,w,h} = newWidget
       const res = grid.removeWidget(newWidget.el,true)
-      this.addCard(cardName, {x,y,w,h})
+      const option = {x,y,w,h,text}
+      const idOption = null
+      this.addCard(cardName, option,idOption)
     })
   }
   addCard(cardName, option, idOption){
@@ -417,17 +440,21 @@ export const CustomElem = class extends HTMLElement {
     const item = document.createElement(cardName)
     item.setAttribute("name","item")
     item.setAttribute("slot","item")
+    if(option.text)item.innerHTML = option.text
+    item.style.width  = "100%"
+    item.style.height = "100%"
     content.appendChild(item)
-    widget.setAttribute('gs-w', option.w);
-    widget.setAttribute('gs-h', option.h);
-    widget.setAttribute('gs-x', option.x);
-    widget.setAttribute('gs-y', option.y);
+    widget.setAttribute('gs-w', option.w)
+    widget.setAttribute('gs-h', option.h)
+    widget.setAttribute('gs-x', option.x)
+    widget.setAttribute('gs-y', option.y)
     widget.appendChild(content)
    
     this.grid.addWidget(widget, option)
+    //this.grid.addWidget(widget, mergedOption)
     const idCounter = collection.data.idCounter || 0
     const idLabel = idOption ? idOption: "id" + idCounter
-    cardMap.set(idLabel, {elem: item, cardName, option})
+    cardMap.set(idLabel, {elem: item, cardName, option, widget})
     const newIdCounter = idCounter + 1
  
     const removeElem = (e) => {
@@ -446,11 +473,18 @@ export const CustomElem = class extends HTMLElement {
   }
   save(data,key,value){
     if(key!=="saveCounter")return
-
+    console.log(cardMap)
     const layout = [...cardMap.entries()]
-      .map(v=>[v[0],{cardName:v[1].cardName,option:v[1].option}])
+      .map(v=>{
+        const idLabel =  v[0]
+        const cardName = v[1].cardName
+        const widget = v[1].widget
+        const {x,y,w,h} = widget.gridstackNode
+        const option = {x, y, w, h}
+        const list = [idLabel, {cardName, option}]
+        return list
+      })
 
-    console.log("layout", layout)
     collection.data.layout = layout
   }
   load(data, key, value){
@@ -460,6 +494,8 @@ export const CustomElem = class extends HTMLElement {
       collection.data.idCounter = 0 
       return
     }
+    this.grid.removeAll();
+
     layout.forEach(v=>{
       const idLabel  = v[0]
       const cardName = v[1].cardName

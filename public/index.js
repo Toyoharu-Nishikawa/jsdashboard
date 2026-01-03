@@ -71,13 +71,17 @@ export const CustomElem = class extends HTMLElement {
       collection.data.drawAreaVisible = drawAreaVisible
       addToLoacalStorage("jsDashboardRecord", "drawAreaVisible", drawAreaVisible)
     }
+    if(e.ctrlKey && e.key === 's'){
+      e.preventDefault()
+      collection.data.saveCounter += 1
+    }
   }
   setFromLocalStorage(){
     console.log("setFromLoacacStorage")
     const item = window.localStorage.getItem("jsDashboardRecord") || {}
     const data = JSON.parse(item)
-    collection.data.idCounter = data.idCounter
-    collection.data.code = data.code
+    //collection.data.idCounter = data.idCounter
+    //collection.data.code = data.code
     collection.data.fontSize = data.fontSize
     collection.data.keyBind = data.keyBind
     collection.data.drawAreaVisible = data.drawAreaVisible
@@ -87,5 +91,5 @@ export const CustomElem = class extends HTMLElement {
 customElements.define(TAG_NAME, CustomElem)
 customElements.whenDefined(TAG_NAME).then(()=>{
   console.log("!!! defined !!!",TAG_NAME)
-  console.clear()
+//  console.clear()
 })

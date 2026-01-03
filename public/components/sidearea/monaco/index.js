@@ -1,4 +1,5 @@
 import {CustomElem as NecoMonaco} from "/neco-cdn/neco-monaco/monaco-editor-wc.js"
+import {isJSON} from "@/modules/utility.js"
 import sheet from "/neco-cdn/neco-monaco/index.css" with { type: "css" }
 
 import {collection} from "@/dataStore/collection.js"
@@ -53,14 +54,14 @@ export const CustomElem = class extends NecoMonaco {
       addToLoacalStorage("jsDashboardRecord", "drawAreaVisible", drawAreaVisible)
     }
     if(e.shiftKey && e.key === 'Enter'){
+      e.stopPropagation()
       e.preventDefault()
       const code = this.editor.getValue()
       const runCounter = collection.data.runCounter  || 0
       const newRunCounter = runCounter + 1
       collection.data.code = code
       collection.data.runCounter = newRunCounter
-
-      addToLoacalStorage("jsDashboardRecord", "code", code)
+      //addToLoacalStorage("jsDashboardRecord", "code", code)
     }
     if(e.ctrlKey && e.altKey && e.key === 'k'){
       e.preventDefault()
@@ -93,7 +94,22 @@ export const CustomElem = class extends NecoMonaco {
   }
   draw(data,key,value){
     if(key == "code" || key=="readCounter"){
-      this.editor.setValue(data.code)
+      const collectionCode  = data.code
+      const monacoCode      = this.editor.getValue(data.code)
+      if(collectionCode === monacoCode) return
+      const editor = this.editor;
+      editor.setValue(data.code)
+
+      //const model = editor.getModel();
+      //const position = editor.getPosition();
+      
+      //editor.executeEdits("update", [
+      //  {
+      //    range: model.getFullModelRange(),
+      //    text: data.code
+      //  }
+      //]);
+      //editor.setPosition(position);
     }  
     if(key == "keyBind"){
       this.setAttribute("mode",data.keyBind)

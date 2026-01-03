@@ -11,7 +11,6 @@ export const cardMap = new Map()
 
 const initialize = () => {
   customElemMap.forEach((value,key)=>{
-    console.log(key, value)
     if(customElements.get(key)==undefined){
       customElements.define(key, value)
     }

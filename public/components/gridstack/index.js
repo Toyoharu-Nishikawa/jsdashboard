@@ -401,12 +401,9 @@ export const CustomElem = class extends HTMLElement {
     })
     this.grid.on('dropped', (event, previousWidget, newWidget) => {
       const cardName = newWidget.el.dataset.card
-      console.log("card", cardName)
-      console.log("newWidget", newWidget)
       const grid = newWidget.grid
       const {x,y,w,h} = newWidget
       const res = grid.removeWidget(newWidget.el,true)
-      console.log(res) 
       this.addCard(cardName, {x,y,w,h})
     })
   }
@@ -445,7 +442,7 @@ export const CustomElem = class extends HTMLElement {
     content.addId(idLabel)
     collection.data.idCounter = newIdCounter 
 
-    addToLoacalStorage("jsDashboardRecord", "idCounter", newIdCounter)
+    //addToLoacalStorage("jsDashboardRecord", "idCounter", newIdCounter)
   }
   save(data,key,value){
     if(key!=="saveCounter")return
@@ -459,13 +456,21 @@ export const CustomElem = class extends HTMLElement {
   load(data, key, value){
     if(key!=="readCounter")return
     const layout = data.layout
-    console.log("readed layout", layout)
+    if(!Array.isArray(layout)){
+      collection.data.idCounter = 0 
+      return
+    }
     layout.forEach(v=>{
       const idLabel  = v[0]
       const cardName = v[1].cardName
       const option = v[1].option
       this.addCard(cardName, option, idLabel)
     })
+    const idList = layout.map(v=>v[0])
+      .map(v=>v.match(/^id(\d+)/)[1])
+      .map(v=>parseInt(v))
+    const maxId = idList.length ==0 ? 0 : Math.max(...idList)
+    collection.data.idCounter = maxId + 1
   }
   draw(data,key, value){
     if(key!=="card")return

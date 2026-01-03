@@ -68,7 +68,6 @@ export const CustomElem = class extends HTMLElement {
     collection.data.runCounter +=1
   }
   async read(e){
-    console.log(e.target)
     const readFileElem = e.target.querySelector("input")
     const files = await importFiles(readFileElem)
     const file = files[0]

@@ -140,7 +140,6 @@ export const CustomElem = class extends HTMLElement {
     this.initialize()
   }
   initialize(){
-    console.log("!!!! initialize()!!!")
     this.setElements()
   }
   setElements(){

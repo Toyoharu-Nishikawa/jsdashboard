@@ -34,9 +34,11 @@ export const CustomElem = class extends NecoMonaco {
     this.initialize()
   }
   initialize(){
-    this.editor.updateOptions({
+    const editor = this.editor
+    editor.updateOptions({
       fontSize: 18 
     });
+
     this.setEvent()
     collection.subscribe(this.draw.bind(this))
   }

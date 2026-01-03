@@ -480,7 +480,8 @@ export const CustomElem = class extends HTMLElement {
         const cardName = v[1].cardName
         const widget = v[1].widget
         const {x,y,w,h} = widget.gridstackNode
-        const option = {x, y, w, h}
+        const text = v[1].option.text
+        const option = {x, y, w, h, text}
         const list = [idLabel, {cardName, option}]
         return list
       })

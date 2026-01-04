@@ -16,8 +16,7 @@ self.MonacoEnvironment = {
     }
     return new Worker(new URL(editorWorker, import.meta.url),{ type: 'module' });
   }
-};
-
+}
 
 export const TAG_NAME ="my-" + (import.meta.url.replace(/^[a-z]+:\/\/[^/]+\/|\/[^/]*$/gi, "").replace(/\//g, "-") || "origin")
 

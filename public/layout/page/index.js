@@ -5,6 +5,8 @@ const createHTML = () => /*html*/`
   :host{
     width: 100%;
     height: 100%;
+    grid-row:1/2;
+    grid-column:1/2;
     display: grid;
     --grid-template-rows: 75px 1fr 30px;
     --grid-template-columns: 10px 320px 1fr 150px;

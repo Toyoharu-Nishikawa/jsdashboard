@@ -16,9 +16,16 @@ const createHTML = () => /*html*/`
     grid-template-columns: minmax(0, 1fr);
   }
   ::slotted([name="item"]){
-     grid-row: 2/3;
-     grid-column: 2/3;
-    background: blue;
+    grid-row: 2/3;
+    grid-column: 2/3;
+    /*
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    */
+    /*background: blue;*/
   }
   div[name="outer"]{
     position:absolute;
@@ -26,6 +33,11 @@ const createHTML = () => /*html*/`
     left:20px;
     right:20px;
     bottom:20px;
+/*
+    display: grid;
+    grid-template-rows: minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
+    */
     /*
     height:100%;
     width: 100%;
@@ -135,7 +147,6 @@ export const CustomElem = class extends HTMLElement {
     this.initialize()
   }
   initialize(){
-    console.log("!!!! initialize()!!!")
     this.setElements()
   }
   setElements(){

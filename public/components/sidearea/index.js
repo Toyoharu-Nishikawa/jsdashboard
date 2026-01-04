@@ -37,7 +37,6 @@ const createHTML = () => /*html*/`
   }
   div.drawArea{
     position:absolute;
-    width: 50px;
     top: 0px;
     right: 0px;
     bottom: 0px;
@@ -47,8 +46,13 @@ const createHTML = () => /*html*/`
     grid-template-columns: minmax(0,1fr);
     width: 500px;
     background: green;
+
+    pointer-events: auto; /* イベントを受け取る */
+    z-index: 9999;        /* 最前面にする */
+
     /*transition: opacity 0.5s ease, visibility 0.5s ease;*/
   }
+
   ${monaco}{
     grid-row: 1/2;
     grid-column: 1/2;

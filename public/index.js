@@ -23,8 +23,12 @@ import {TAG_NAME as footer_text} from "./components/footer_text/index.js"
 import {collection} from "@/dataStore/collection.js"
 import {addToLoacalStorage} from "@/modules/utility.js"
 import * as sci from "@/node_modules/sci/index.js"
+import {Store} from "/neco-cdn/neco-store/index.js"
 
 export const TAG_NAME ="my-" + (import.meta.url.replace(/^[a-z]+:\/\/[^/]+\/|\/[^/]*$/gi, "").replace(/\//g, "-") || "origin")
+
+window.sci = sci
+window.Store = Store
 
 const createHTML = () => /*html*/`
 <${page}>
@@ -59,7 +63,6 @@ export const CustomElem = class extends HTMLElement {
     this.initialize()
   }
   initialize(){
-    window.sci = sci
     document.addEventListener("keydown",this.keyBind.bind(this))    
     this.setFromLocalStorage()
   }
@@ -69,18 +72,22 @@ export const CustomElem = class extends HTMLElement {
       e.preventDefault()
       const drawAreaVisible = !collection.data.drawAreaVisible
       collection.data.drawAreaVisible = drawAreaVisible
-      addToLoacalStorage("jsDashboardRecord", "drawAreaVisible", drawAreaVisible)
+      //addToLoacalStorage("jsDashboardRecord", "drawAreaVisible", drawAreaVisible)
+    }
+    if(e.ctrlKey && e.key === 's'){
+      e.preventDefault()
+      collection.data.saveCounter += 1
     }
   }
   setFromLocalStorage(){
     console.log("setFromLoacacStorage")
     const item = window.localStorage.getItem("jsDashboardRecord") || {}
     const data = JSON.parse(item)
-    collection.data.idCounter = data.idCounter
-    collection.data.code = data.code
+    //collection.data.idCounter = data.idCounter
+    //collection.data.code = data.code
     collection.data.fontSize = data.fontSize
     collection.data.keyBind = data.keyBind
-    collection.data.drawAreaVisible = data.drawAreaVisible
+    //collection.data.drawAreaVisible = data.drawAreaVisible
   }
 }
 

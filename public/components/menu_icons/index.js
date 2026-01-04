@@ -3,6 +3,7 @@ import {collection} from "@/dataStore/collection.js"
 import "@/node_modules/@shoelace-style/shoelace/cdn/shoelace.js"
 import shoelaceSheet from "@/node_modules/@shoelace-style/shoelace/dist/themes/light.css" with { type: "css" }
 import {saveStringAsFile} from "@/modules/save.js"
+import "/neco-cdn/neco-material/index.js"
 
 export const TAG_NAME ="my-" + (import.meta.url.replace(/^[a-z]+:\/\/[^/]+\/|\/[^/]*$/gi, "").replace(/\//g, "-") || "origin")
 
@@ -32,6 +33,10 @@ const createHTML = () => /*html*/`
   </sl-menu>
 </sl-dropdown>
 <sl-button name="runBtn">Run</sl-button>
+<sl-input placeholder="index.txt" name="inputBtn">
+  <md-icon slot="prefix" style="color:gray;">file_export</md-icon>
+</sl-input>
+<sl-switch name="switchBtn" checked>editor</sl-switch>
 `
 export const CustomElem = class extends HTMLElement {
   constructor(){
@@ -48,6 +53,7 @@ export const CustomElem = class extends HTMLElement {
   }
   initialize(){
     this.setElements()
+    collection.subscribe(this.draw.bind(this))
   }
   setElements(){
     const menu        = this.shadow.querySelector("[name=menu]")
@@ -57,18 +63,24 @@ export const CustomElem = class extends HTMLElement {
     const importBtn   = this.shadow.querySelector("[name=importBtn]")
     const exportBtn   = this.shadow.querySelector("[name=exportBtn]")
     const registerBtn = this.shadow.querySelector("[name=registerBtn]")
-    runBtn.onclick  = this.run
-    readBtn.onclick = this.read.bind(this)
-    saveBtn.onclick = this.save.bind(this)
+    const inputBtn    = this.shadow.querySelector("[name=inputBtn]")
+    const switchBtn   = this.shadow.querySelector("[name=switchBtn]")
+    runBtn.onclick    = this.run
+    readBtn.onclick   = this.read.bind(this)
+    saveBtn.onclick   = this.save.bind(this)
     importBtn.onclick = this.import.bind(this)
     exportBtn.onclick = this.export.bind(this)
-    this.elements = {menu, runBtn,readBtn,saveBtn,importBtn,exportBtn,registerBtn} 
+    inputBtn.oninput  = this.input.bind(this)
+    switchBtn.addEventListener("sl-change",this.switch.bind(this))
+    this.elements = {
+      menu, runBtn,readBtn,saveBtn,importBtn,exportBtn,registerBtn,
+      inputBtn, switchBtn
+    } 
   }
   run(){
     collection.data.runCounter +=1
   }
   async read(e){
-    console.log(e.target)
     const readFileElem = e.target.querySelector("input")
     const files = await importFiles(readFileElem)
     const file = files[0]
@@ -86,7 +98,6 @@ export const CustomElem = class extends HTMLElement {
     collection.data.saveCounter +=1
   }
   async import(e){
-    console.log(e.target)
     const readFileElem = e.target.querySelector("input")
     const files = await importFiles(readFileElem)
     window.importTexts = files
@@ -100,7 +111,22 @@ export const CustomElem = class extends HTMLElement {
 
     collection.data.exportCounter +=1
   }
-
+  input(e){
+    const saveFileName = e.target.value
+    collection.data.saveFileName = saveFileName 
+  }
+  switch(e){
+    const editorSwitch = e.target.checked
+    collection.data.drawAreaVisible = editorSwitch
+  }
+  draw(data,key,value){
+    if(key=="fileName"){
+      this.elements.inputBtn.value = value
+    }
+    if(key=="drawAreaVisible"){
+      this.elements.switchBtn.checked = value
+    }
+  }
 }
 
 customElements.define(TAG_NAME, CustomElem)

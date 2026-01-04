@@ -72,7 +72,7 @@ export const CustomElem = class extends HTMLElement {
       e.preventDefault()
       const drawAreaVisible = !collection.data.drawAreaVisible
       collection.data.drawAreaVisible = drawAreaVisible
-      addToLoacalStorage("jsDashboardRecord", "drawAreaVisible", drawAreaVisible)
+      //addToLoacalStorage("jsDashboardRecord", "drawAreaVisible", drawAreaVisible)
     }
     if(e.ctrlKey && e.key === 's'){
       e.preventDefault()
@@ -87,12 +87,12 @@ export const CustomElem = class extends HTMLElement {
     //collection.data.code = data.code
     collection.data.fontSize = data.fontSize
     collection.data.keyBind = data.keyBind
-    collection.data.drawAreaVisible = data.drawAreaVisible
+    //collection.data.drawAreaVisible = data.drawAreaVisible
   }
 }
 
 customElements.define(TAG_NAME, CustomElem)
 customElements.whenDefined(TAG_NAME).then(()=>{
   console.log("!!! defined !!!",TAG_NAME)
-//  console.clear()
+  console.clear()
 })

@@ -53,7 +53,7 @@ export const CustomElem = class extends NecoMonaco {
       e.preventDefault()
       const drawAreaVisible = !collection.data.drawAreaVisible
       collection.data.drawAreaVisible = drawAreaVisible
-      addToLoacalStorage("jsDashboardRecord", "drawAreaVisible", drawAreaVisible)
+      //addToLoacalStorage("jsDashboardRecord", "drawAreaVisible", drawAreaVisible)
     }
     if(e.shiftKey && e.key === 'Enter'){
       e.stopPropagation()

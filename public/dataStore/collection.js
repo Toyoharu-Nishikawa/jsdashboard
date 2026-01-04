@@ -15,7 +15,7 @@ const initial = {
   saveCounter  : 0,
   importCounter: 0,
   exportCounter: 0,
-  fileName: "",
+  fileName: "input.txt",
 }
 
 export const collection = new Store( structuredClone(initial))
@@ -29,8 +29,6 @@ const beforeEmittingFunc = (data, key, value) => {
 
 const afterEmittingFunc = (data, key, value) => {
   if(key=="readCounter"){
-    console.log("!!!read")
-    const text = data.fileText
   }
   if(key==="saveCounter"){
     const layout = data.layout
@@ -38,7 +36,8 @@ const afterEmittingFunc = (data, key, value) => {
     //const idCounter = data.idCounter
     const exportData = {code, layout}
     const exportText = JSON.stringify(exportData, null, "  ")
-    saveStringAsFile(exportText, "input.txt")
+    const fileName = data.fileName || "input.txt"
+    saveStringAsFile(exportText, fileName)
   }
 }
 const initialize = () => {
